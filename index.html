@@ -35,9 +35,11 @@ button{font:inherit;cursor:pointer;border:0;border-radius:12px}
 .foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;font-size:13px;color:var(--sub)}
 .date{color:var(--stamp);font-weight:600;letter-spacing:.05em}
 .note{font-size:13px;color:var(--sub);margin-top:14px}
-.tools{display:flex;gap:10px;margin-top:26px}
-.tools button{background:transparent;border:1px solid var(--line);color:var(--ink);padding:8px 14px;font-size:14px}
-.tools button:hover{border-color:var(--accent)}
+.tools{margin-top:26px}
+.hint{margin:0 0 8px;font-size:13px;color:var(--sub)}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.tools button{background:transparent;border:1px solid var(--line);color:var(--sub);padding:6px 16px;font-size:14px;border-radius:99px}
+.tools button:hover{border-color:var(--accent);color:var(--ink)}
 .lead.ai{color:var(--sub);font-size:15px}
 .go[disabled]{opacity:.6;cursor:wait}
 .fine{font-size:12px;color:var(--sub);margin-top:22px}
@@ -51,7 +53,7 @@ button{font:inherit;cursor:pointer;border:0;border-radius:12px}
 <div class="row"><input id="q" placeholder="比如：哥我今天下班很早呢" autocomplete="off"><button class="go" id="go">抽一张</button></div>
 <div class="chips" id="chips"></div>
 <div id="out" aria-live="polite"></div>
-<div class="tools"><button id="daily">今天的一张</button><button id="bye">说再见</button></div>
+<div class="tools"><p class="hint">不知道说什么？</p><div class="btns"><button id="daily">随手翻一张</button><button id="bye">说再见</button></div></div>
 <p class="fine" id="fine"></p>
 </main>
 <script>
@@ -143,7 +145,7 @@ document.getElementById("go").onclick=draw;
 q.addEventListener("keydown",e=>{if(e.key==="Enter")draw()});
 document.getElementById("daily").onclick=()=>{const c=pick(C);q.value="";show(c,"",c.l)};
 document.getElementById("bye").onclick=()=>{q.value="";show(BYE,"",BYE.l)};
-document.getElementById("fine").textContent=API?"你写下的话，会被送到 AI 那里，请它帮你翻一张卡片。卡片上的字，每一句都是他真的说过的。":"卡片原文都是真实记录。";
+document.getElementById("fine").textContent=API?"你写下的话，会被送到 AI 那里，请它帮你翻一张卡片。卡片上的字，每一句都是他真的说过的；灰色的小字是 AI 轻轻搭的一句话，不是他说的。":"卡片原文都是真实记录。";
 ["哥我今天下班很早呢","买了一条新裙子","睡不着","最近好累","今天天气不好"].forEach(x=>{
   const b=document.createElement("button");b.className="chip";b.textContent=x;
   b.onclick=()=>{q.value=x;draw()};document.getElementById("chips").append(b)});
