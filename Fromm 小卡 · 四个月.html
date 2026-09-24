@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fromm 小卡 · 四个月</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6eaf6;--ink:#2b2d4a;--sub:#6b6f92;--card:#fffdfa;--line:#c9cfea;--accent:#7a8cf0;--stamp:#e0708f;--field:#f6f7fd;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1e33;--ink:#eceefb;--sub:#9a9fc6;--card:#2a2d4a;--line:#3d4168;--field:#242741;--accent:#9aa8ff;--stamp:#f08fab}}
+:root[data-theme="dark"]{--bg:#1c1e33;--ink:#eceefb;--sub:#9a9fc6;--card:#2a2d4a;--line:#3d4168;--field:#242741;--accent:#9aa8ff;--stamp:#f08fab}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Noto Serif SC","Songti SC",serif;min-height:100%}
+main{max-width:520px;margin:0 auto;padding:28px 20px 48px}
+h1{font-size:22px;font-weight:600;margin:0 0 4px}
+.sub{color:var(--sub);font-size:14px;margin:0 0 22px}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink)}
+input:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px}
+.go{background:var(--accent);color:#fff;padding:0 18px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 26px}
+.chip{background:transparent;border:1px solid var(--line);color:var(--sub);padding:4px 12px;font-size:13px;border-radius:99px}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.me{align-self:flex-end;font-size:14px;color:var(--sub);margin:0 0 10px;text-align:right}
+.lead{margin:0 0 16px}
+.photo{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:22px 22px 14px;transform:rotate(-1.2deg);transition:transform .25s}
+.photo.flip{animation:deal .45s ease-out}
+@keyframes deal{from{transform:translateY(14px) rotate(3deg);opacity:0}to{transform:rotate(-1.2deg);opacity:1}}
+@media (prefers-reduced-motion:reduce){.photo.flip{animation:none}}
+.quote{margin:0;padding-left:14px;border-left:3px solid var(--accent);font-size:18px;line-height:1.9}
+.quote p{margin:0}
+.foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;font-size:13px;color:var(--sub)}
+.date{color:var(--stamp);font-weight:600;letter-spacing:.05em}
+.note{font-size:13px;color:var(--sub);margin-top:14px}
+.tools{display:flex;gap:10px;margin-top:26px}
+.tools button{background:transparent;border:1px solid var(--line);color:var(--ink);padding:8px 14px;font-size:14px}
+.tools button:hover{border-color:var(--accent)}
+#out:empty{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>今天，来跟这个郑业成哥哥聊一聊！</h1>
+<p class="sub">即使告别Fromm，我们还有很多个未来。</p>
+<div class="row"><input id="q" placeholder="比如：哥我今天下班很早呢" autocomplete="off"><button class="go" id="go">抽一张</button></div>
+<div class="chips" id="chips"></div>
+<div id="out" aria-live="polite"></div>
+<div class="tools"><button id="daily">今天的一张</button><button id="bye">说再见</button></div>
+</main>
+<script>
+// 卡片数据：text 为原文（逐行原样），lead 为衔接语（不含任何编造的事实）
+const C=[
+{d:"0527",tp:"初见",k:"你好,初,认识,开始,第一,嗨,哈喽",l:"一切都是从这句开始的。",t:["小叶子，你好呀！我是郑业成～以后就在fromm多多聊天吧！"]},
+{d:"0528",tp:"摸鱼",k:"摸鱼,上班,工作,忙,无聊,班,偷懒",l:"上班时间偷偷聊天，被抓到的是你们俩。",t:["下午好不好","还没下班呢","你在摸鱼？小心我举报你！哈哈哈","哦，不对，我好像也在摸鱼"]},
+{d:"0611",tp:"吃饭跑步",k:"吃,饭,饿,跑步,减肥,运动,健身,瘦,好吃",l:"吃饭和运动，哥都有话说。",t:["该跑步的跑步，该吃饭的吃饭吧"]},
+{d:"0611",tp:"蚊子",k:"蚊子,虫,夏天,热,咬,包",l:"夏天的烦恼，哥也同款。",t:["哥不是青蛙，消灭不了蚊子！我也在和它抗争中"]},
+{d:"0623",tp:"追剧",k:"追剧,剧,电视,电影,看,综艺,晚上",l:"今晚有安排了吗？",t:["晚上必须追，9点第一集是吧"]},
+{d:"0623",tp:"生日会",k:"生日,生日会,活动,见面,惊喜,节目",l:"关于生日会，哥是认真的。",t:["生日会这个事应该是能当个事办的"]},
+{d:"0623",tp:"痘痘",k:"痘,脸,皮肤,长痘,自拍,丑,照片,素颜,熬夜",l:"脸上有小状况的日子，哥也有过。",t:["【自拍图片】果然一颗痘痘成为了全场焦点"]},
+{d:"0623",tp:"收工",k:"下班,收工,早,回家,结束,提前",l:"下班这件事，哥比谁都懂。",t:["好了朋友们，收拾收拾，差不多要下班了，哈哈哈"]},
+{d:"0625",tp:"分享",k:"分享,新,买,做,礼物,开心,裙子,好看,喜欢,漂亮,惊喜",l:"有好东西就想第一时间分享，哥也是。",t:["手搓了一个小彩铃儿","必须分享一下子"]},
+{d:"0628",tp:"课间",k:"困,累,休息,午休,课,睡,上课,犯困",l:"累了就歇一会儿。",t:["剑神还没下班呢，课间休息（睡）"]},
+{d:"0701",tp:"染发",k:"染发,头发,发型,剪发,理发,颜色,造型,美发",l:"说到头发，哥可有话讲。",t:["那些浅色的我就先不尝试了","那得漂，舍不得我这茂密的秀发哈哈","已经染完了，但是这里好像发不了live图啊","吹头发了，请忽略我的低颅顶"]},
+{d:"0701",tp:"骑车",k:"骑车,路上,安全,开车,地铁,通勤,手机,骑,路",l:"路上的事，哥一定会叮嘱。",t:["骑车的，注意安全！不许一边骑车一边看消息啊。"]},
+{d:"0701",tp:"休息日",k:"休息,放假,假,休假,在家,躺",l:"休息日就该好好享受。",t:["今天休息","明天我还休息姆哈哈哈哈哈哈哈哈哈哈哈"]},
+{d:"0702",tp:"睡前",k:"睡,晚安,失眠,睡不着,熬夜,夜,困,数羊",l:"夜深了，哥陪你数一数。",t:["我12点前一定睡","睡不着的话我们就数羊吧","一只羊","两只羊","三只羊"]},
+{d:"0703",tp:"周末小卡",k:"周末,下班,小卡,期待,星期五,周五",l:"周末到了，去收你的小卡吧。",t:["下班了吗？","准备好喜迎周末了吗","都收到小卡了？"]},
+{d:"0703",tp:"努力",k:"学习,努力,加油,压力,难,练习,考试,坚持,拍",l:"努力的人，哥也是。",t:["一直在学习如何正确拍摄小卡哈哈","我继续努力努力，太考验我了"]},
+{d:"0703",tp:"想看点啥",k:"想,想要,愿望,建议,推荐,随便,选择,想看",l:"你想说什么，哥都愿意听。",t:["话说生日会，想看点啥？","你随便说说，我随便听听"]},
+{d:"0710",tp:"台风天",k:"台风,天气,下雨,风,雨,出门,零食,窝,暴雨,冷,热",l:"天气不好的时候，哥会提醒你。",t:["台风天注意安全，离路边的高牌子远一点","我这边很安全，放心","囤点零食，电影，周末窝在家里吧哈哈"]},
+{d:"0715",tp:"加班",k:"加班,晚,饭,晚饭,忙,累,八点,吃了吗,忙碌",l:"这么晚了，哥会惦记着你。",t:["下班了没","不会还在加班吧","我这一看都八点多了，还以为五六点呢哈哈","那吃过晚饭了吗"]}
+];
+const BYE={d:"0611",tp:"来日方长",l:"最后想给你看这一张。",t:["不是抛弃，是来日方长"]};
+// 泛用卡：话题匹配不到时抽这些
+const GEN=[1,8,2,3,15];
+const FALL="这个话题哥还没聊过，但翻到一张相近的心情：";
+const BYEK=["再见","告别","舍不得","结束","离开","别走","停止","不见","拜拜","最后"];
+const out=document.getElementById("out"),q=document.getElementById("q");
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function show(card,mine,lead,note){
+out.innerHTML="";
+if(mine){const m=document.createElement("p");m.className="me";m.textContent="我：「"+mine+"」";out.append(m)}
+const p=document.createElement("p");p.className="lead";p.textContent=lead;out.append(p);
+const ph=document.createElement("div");ph.className="photo flip";
+const bq=document.createElement("blockquote");bq.className="quote";
+card.t.forEach(x=>{const e=document.createElement("p");e.textContent=x;bq.append(e)});
+const f=document.createElement("div");f.className="foot";
+f.innerHTML='<span class="date"></span><span>Fromm</span>';
+f.firstChild.textContent=card.d.slice(0,2)+"月"+card.d.slice(2)+"日 · "+card.tp;
+ph.append(bq,f);out.append(ph);
+if(note){const n=document.createElement("p");n.className="note";n.textContent=note;out.append(n)}
+}
+function draw(){
+const s=q.value.trim();if(!s)return;
+if(BYEK.some(k=>s.includes(k)))return show(BYE,s,BYE.l);
+let best=0,pool=[];
+C.forEach(c=>{const n=c.k.split(",").filter(k=>s.includes(k)).length;
+if(n>best){best=n;pool=[c]}else if(n===best&&n>0)pool.push(c)});
+if(pool.length){const c=pick(pool);return show(c,s,c.l)}
+show(C[pick(GEN)],s,FALL,"这是相近的话，不是对你这句的回答。");
+}
+document.getElementById("go").onclick=draw;
+q.addEventListener("keydown",e=>{if(e.key==="Enter")draw()});
+document.getElementById("daily").onclick=()=>{const c=pick(C);q.value="";show(c,"",c.l)};
+document.getElementById("bye").onclick=()=>{q.value="";show(BYE,"",BYE.l)};
+["哥我今天下班很早呢","买了一条新裙子","睡不着","最近好累","今天台风"].forEach(x=>{
+const b=document.createElement("button");b.className="chip";b.textContent=x;
+b.onclick=()=>{q.value=x;draw()};document.getElementById("chips").append(b)});
+</script>
+</body>
+</html>
