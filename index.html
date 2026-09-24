@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fromm 小卡 · 四个月</title>
+<title>想这个zyc的时候</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#e6eaf6;--ink:#2b2d4a;--sub:#6b6f92;--card:#fffdfa;--line:#c9cfea;--accent:#7a8cf0;--stamp:#e0708f;--field:#f6f7fd;
@@ -46,8 +46,8 @@ button{font:inherit;cursor:pointer;border:0;border-radius:12px}
 </head>
 <body>
 <main>
-<h1>和哥说说话</h1>
-<p class="sub">Fromm 里的四个月，每一句都是他真的说过的。</p>
+<h1>今天，来跟这个郑业成哥哥聊一聊</h1>
+<p class="sub">即使告别Fromm，我们也有很多个当下和未来。</p>
 <div class="row"><input id="q" placeholder="比如：哥我今天下班很早呢" autocomplete="off"><button class="go" id="go">抽一张</button></div>
 <div class="chips" id="chips"></div>
 <div id="out" aria-live="polite"></div>
@@ -143,8 +143,8 @@ document.getElementById("go").onclick=draw;
 q.addEventListener("keydown",e=>{if(e.key==="Enter")draw()});
 document.getElementById("daily").onclick=()=>{const c=pick(C);q.value="";show(c,"",c.l)};
 document.getElementById("bye").onclick=()=>{q.value="";show(BYE,"",BYE.l)};
-document.getElementById("fine").textContent=API?"点「抽一张」时，你输入的话会发送给 AI 服务，用来挑卡。卡片原文都是真实记录；灰色小字的衔接语由 AI 写，不是他说的。":"卡片原文都是真实记录。";
-["哥我今天下班很早呢","买了一条新裙子","睡不着","最近好累","今天台风"].forEach(x=>{
+document.getElementById("fine").textContent=API?"你写下的话，会被送到 AI 那里，请它帮你翻一张卡片。卡片上的字，每一句都是他真的说过的。":"卡片原文都是真实记录。";
+["哥我今天下班很早呢","买了一条新裙子","睡不着","最近好累","今天天气不好"].forEach(x=>{
   const b=document.createElement("button");b.className="chip";b.textContent=x;
   b.onclick=()=>{q.value=x;draw()};document.getElementById("chips").append(b)});
 </script>
